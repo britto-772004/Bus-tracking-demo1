@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draw Circle with Points and Distances</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            flex-direction: column;
+        }
+        h3{
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+    </style>
+</head>
+<body>
+    <h3 id="confirmation"></h3>
+    <canvas id="myCanvas" width="1000" height="1000"></canvas>
+    <script>
+        function drawCircleWithPoints(points, color) {
+            const canvas = document.getElementById('myCanvas');
+            const context = canvas.getContext('2d');
+
+            context.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const circleRadius = 400;
+
+            const distanceInPixels = points.map(distance => distance * 20);
+
+            context.beginPath();
+            context.arc(centerX, centerY, circleRadius, 0, 2 * Math.PI);
+            context.lineWidth = 6;
+            context.strokeStyle = color;
+            context.stroke();
+
+            for (let i = 0; i < distanceInPixels.length; i++) {
+                const angle = (i / distanceInPixels.length) * 2 * Math.PI;
+                const pointX = centerX + distanceInPixels[i] * Math.cos(angle);
+                const pointY = centerY + distanceInPixels[i] * Math.sin(angle);
+
+                context.beginPath();
+                context.moveTo(centerX, centerY);
+                context.lineTo(pointX, pointY);
+                context.strokeStyle = 'black';
+                context.stroke();
+
+                context.beginPath();
+                context.arc(pointX, pointY, 8, 0, 2 * Math.PI);
+                context.fillStyle = 'red';
+                context.fill();
+
+                context.fillStyle = 'black';
+                context.font = '20px Arial';
+                context.fillText(`${points[i]} meters`, pointX + 10, pointY);
+            }
+        }
+
+        function updateCanvas() {
+            fetch('/update_distances')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('confirmation').textContent = data.message;
+                    drawCircleWithPoints(data.points, data.color);
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        setInterval(updateCanvas, 2000); // Update the canvas every 2 seconds
+    </script>
+</body>
+</html>
+  

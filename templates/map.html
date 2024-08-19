@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geofence Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+    <h1>Geofence Map - KGISL Institute of Technology</h1>
+    <div id="map" style="width: 100%; height: 600px;">
+        {{ map_html|safe }}
+    </div>
+    <button id="view-btn">View Students in Geofence</button>
+    <p id="student-count">
+        {{students_count }} are away from the bus
+    </p>
+    
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        document.getElementById('view-btn').onclick = function() {
+            fetch('/count_students')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('student-count').innerText = 'Students within the geofence: ' + data.count;
+                });
+        };
+    </script>
+</body>
+</html>

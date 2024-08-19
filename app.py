@@ -356,6 +356,6 @@ def is_within_geofence(device_lat, device_lng, kgisl_lat, kgisl_lng, radius=1000
 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=False,host='0.0.0.0')
 
 
